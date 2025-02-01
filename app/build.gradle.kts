@@ -1,16 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services") // Apply Google Services for Firebase
 }
 
 android {
     namespace = "com.example.habitpals"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.habitpals"
         minSdk = 26
-        targetSdk = 34
+        //noinspection EditedTargetSdkVersion,OldTargetApi
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -36,7 +38,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,4 +46,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    dependencies {
+        implementation(platform("com.google.firebase:firebase-bom:32.7.0")) // Firebase BOM
+        implementation("com.google.firebase:firebase-auth")      // Firebase Authentication
+        implementation("com.google.firebase:firebase-firestore") // Firestore Database
+    }
+
 }

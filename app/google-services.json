@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "542487143538",
+    "project_id": "habit-pals-d16bc",
+    "storage_bucket": "habit-pals-d16bc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542487143538:android:07f077f6328e472d79ceeb",
+        "android_client_info": {
+          "package_name": "com.example.habitpals"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4MBE0fif71P8CfSXI_xD_QUgUoanMhTQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
