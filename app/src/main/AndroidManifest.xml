@@ -32,6 +32,9 @@
         <!-- Login Activity -->
         <activity android:name=".auth.LoginActivity" />
 
+        <!--Setting the profile activity (after signup)-->
+        <activity android:name=".profile.ProfileSetupActivity" />
+
         <!-- Main Activity (after login) -->
         <activity android:name=".MainActivity"
             android:exported="true"/>
