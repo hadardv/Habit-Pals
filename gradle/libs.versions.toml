@@ -14,9 +14,15 @@ activity = "1.10.0"
 constraintlayout = "2.2.0"
 firebaseStorageKtx = "21.0.1"
 firebaseAuthKtx = "23.2.0"
+androidx-navigation = "2.7.5"
+materialVersion = "1.9.0"
+navigationFragmentKtx = "2.8.8"
+navigationUiKtx = "2.8.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-navigation-fragment-ktx-v288 = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-navigation-ui-ktx-v288 = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 com-google-firebase-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 com-google-firebase-firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
@@ -40,7 +46,9 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
-
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
+material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
