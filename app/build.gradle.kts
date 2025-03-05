@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services") // Apply Google Services for Firebase
+    id("com.google.gms.google-services") // Firebase
 }
+
 
 android {
     namespace = "com.example.habitpals"
@@ -61,4 +62,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx.v288)
     implementation(libs.material.v190)
 
+    implementation(libs.coil)
+
 }
+
