@@ -3,6 +3,7 @@ package com.example.habitpals.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -28,6 +29,8 @@ class SignupActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        Log.d("FirestoreCheck", "Firestore instance: $db")
+
 
         email_edit_text = findViewById(R.id.email_edit_text)
         password_edit_text = findViewById(R.id.password_edit_text)
@@ -90,6 +93,9 @@ class SignupActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
+                    } else {
+                        Toast.makeText(this, "Authentication failed. Please login again.", Toast.LENGTH_SHORT).show()
+                        return@addOnCompleteListener
                     }
                 } else {
                     Toast.makeText(this, "Sign-Up Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()

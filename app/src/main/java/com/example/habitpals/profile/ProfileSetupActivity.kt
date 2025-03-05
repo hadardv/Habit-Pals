@@ -2,6 +2,7 @@ package com.example.habitpals.profile
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 
 class ProfileSetupActivity : AppCompatActivity() {
 
@@ -72,22 +74,49 @@ class ProfileSetupActivity : AppCompatActivity() {
             uploadProfileImage(userId, name)
         } else {
             updateUserProfile(userId, name, "")
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+            return
         }
     }
 
     private fun uploadProfileImage(userId: String, name: String) {
-        val storageRef = storage.reference.child("profile_pictures/$userId.jpg")
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        storageRef.putFile(selectedImageUri!!)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    updateUserProfile(userId, name, uri.toString())
+//        val storageRef = FirebaseStorage.getInstance().reference.child("profile_pictures/$userId.jpg")
+//        Log.d("FirebaseStorage", "Saving image to path: $storagePath")
+
+        val storagePath = "profile_pictures/$userId.jpg"
+        Log.d("FirebaseStorage", "Saving image to path: $storagePath")
+
+        val storageRef = storage.reference.child(storagePath)
+
+        contentResolver.openInputStream(selectedImageUri!!)?.use { inputStream ->
+            val tempFile = File.createTempFile("upload", ".jpg", cacheDir)
+            tempFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+            val fileUri = Uri.fromFile(tempFile)
+
+            storageRef.putFile(fileUri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+                        updateUserProfile(userId, name, uri.toString())
+                    }
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener { e ->
+                    Log.e("FirebaseStorage", "Upload failed: ${e.message}")
+                    Toast.makeText(this, "Image upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+        Log.d("FirebaseAuth", "User UID: ${FirebaseAuth.getInstance().currentUser?.uid}")
+        Log.d("FirebaseStorage", "Uploading to: profile_pictures/$userId.jpg")
+
+
     }
+
 
     private fun updateUserProfile(userId: String, name: String, profilePictureUrl: String) {
         val userData = mapOf(

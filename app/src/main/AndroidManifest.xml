@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,14 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitPals"
         tools:targetApi="31">
-<!--        <activity-->
-<!--            android:name=".SignupActivity"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
+
         <!-- Main Activity (Home screen after login) -->
         <activity android:name=".auth.SignupActivity"
             android:exported="true">
@@ -33,11 +27,21 @@
         <activity android:name=".auth.LoginActivity" />
 
         <!--Setting the profile activity (after signup)-->
-        <activity android:name=".profile.ProfileSetupActivity" />
+        <activity android:name=".profile.ProfileSetupActivity"
+            android:exported="true"/>
 
         <!-- Main Activity (after login) -->
         <activity android:name=".MainActivity"
             android:exported="true"/>
+
     </application>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"
+        tools:ignore="ManifestOrder" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
+        tools:ignore="SelectedPhotoAccess" />
+
+
+
 
 </manifest>
