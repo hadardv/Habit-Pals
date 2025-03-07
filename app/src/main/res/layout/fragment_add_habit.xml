@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/habit_name_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter habit name" />
+
+    <EditText
+        android:id="@+id/habit_duration_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter habit duration (e.g., 30 days)"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/btn_save_habit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Habit"
+        android:backgroundTint="@color/purple"
+        android:textColor="#FFF"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

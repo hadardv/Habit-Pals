@@ -56,16 +56,16 @@
         app:layout_constraintTop_toBottomOf="@id/profile_section"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="MissingConstraints" />
+         />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/habits_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_height="250dp"
+        android:scrollbars="vertical"
+        android:nestedScrollingEnabled="true"
         app:layout_constraintTop_toBottomOf="@id/habits_title"
         tools:listitem="@layout/item_habit"/>
-        />
 
     <!--Gallery Section (bottom section)-->
 
@@ -79,20 +79,27 @@
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/habits_recycler"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gallery_recycler"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/gallery_title"
-        tools:listitem="@layout/item_gallery_image"/>
+        android:orientation="horizontal"
+        android:padding="4dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/gallery_title">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gallery_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:overScrollMode="never"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_gallery_image"/>
+    </LinearLayout>
 
 
-    <!--Buttons at the bottom of the screen-->
-
+    <!-- Buttons at the bottom of the screen -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -101,29 +108,26 @@
         android:layout_margin="16dp"
         app:layout_constraintTop_toBottomOf="@id/gallery_recycler"
         app:layout_constraintBottom_toBottomOf="parent"
-        >
+        tools:ignore="NotSibling">
 
+        <Button
+            android:id="@+id/btn_add_habit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="20dp"
+            android:text="Add a habit"
+            android:backgroundTint="@color/purple"
+            android:textColor="#333" />
 
-    <Button
-        android:id="@+id/btn_add_habit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginEnd="20dp"
-        android:text="Add a habit"
-        android:backgroundTint="@color/purple"
-        android:textColor="#333"
-        tools:ignore="Suspicious0dp" />
-
-    <Button
-        android:id="@+id/btn_gallery"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Gallery"
-        android:textColor="#333"
-        android:backgroundTint="@color/purple"
-        tools:ignore="Suspicious0dp"  />
+        <Button
+            android:id="@+id/btn_gallery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Gallery"
+            android:textColor="#333"
+            android:backgroundTint="@color/purple" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
