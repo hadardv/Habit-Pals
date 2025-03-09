@@ -64,5 +64,7 @@ dependencies {
 
     implementation(libs.coil)
 
+    implementation(libs.androidx.appcompat.v161)
+
 }
 

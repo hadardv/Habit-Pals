@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.2"
+appcompatVersion = "1.6.1"
 coil = "2.4.0"
 firebaseBom = "33.8.0"
 firebaseBomVersion = "32.7.0"
@@ -25,6 +26,7 @@ navigationUiKtx = "2.8.8"
 roomCompiler = "2.6.1"
 
 [libraries]
+androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-fragment-ktx-v288 = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx-v288 = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }

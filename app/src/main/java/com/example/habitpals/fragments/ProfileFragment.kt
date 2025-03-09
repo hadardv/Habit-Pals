@@ -83,8 +83,9 @@ class ProfileFragment : Fragment() {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val name = document.getString("name") ?: "User"
-                    val friendsCount = document.getLong("friendsCount") ?: 0
                     val profileImage = document.getString("profilePicture")
+                    val friends = document.get("friends") as? List<*> ?: emptyList<Any>()
+                    val friendsCount = friends.size
 
                     Log.d(
                         "ProfileFragment",
@@ -112,29 +113,6 @@ class ProfileFragment : Fragment() {
 
     }
 
-//    @SuppressLint("NotifyDataSetChanged")
-//    private fun fetchHabits(userId: String, habitsList: MutableList<Habit>, adapter: HabitsAdapter) {
-//
-//        db.collection("users").document(userId).collection("habits")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                habitsList.clear()
-//                for (document in result) {
-//                    val name = document.getString("name") ?: "Unknown Habit"
-//                    val durationString = document.getString("duration")  // Might be stored as String
-//                    val duration = durationString?.toIntOrNull() ?: document.getLong("duration")?.toInt() ?: 0 // Safely convert
-//
-//                    val habit = Habit(name, duration)
-//                    habitsList.add(habit)
-//
-//                }
-//                adapter.notifyDataSetChanged()
-//            }
-//            .addOnFailureListener { e ->
-//                Log.e("ProfileFragment", "Error fetching habits: ${e.message}")
-//            }
-//
-//    }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun fetchHabits(userId: String, habitsList: MutableList<Habit>, adapter: HabitsAdapter) {
@@ -143,9 +121,11 @@ class ProfileFragment : Fragment() {
             .addOnSuccessListener { result ->
                 habitsList.clear()
                 for (document in result) {
+                    val habitId = document.id
                     val name = document.getString("name") ?: "Unknown Habit"
-                    val duration = document.getLong("duration")?.toInt() ?: 0 // Read as Long and convert to Int
-                    val habit = Habit(name, duration)
+                    val duration = document.getLong("duration")?.toInt() ?: 0
+                    val progress = document.getLong("progress")?.toInt() ?: 0
+                    val habit = Habit(habitId, name, duration, progress)
                     habitsList.add(habit)
                 }
                 adapter.notifyDataSetChanged()
@@ -155,25 +135,6 @@ class ProfileFragment : Fragment() {
             }
     }
 
-//
-//    @SuppressLint("NotifyDataSetChanged")
-//    private fun fetchGalleryImages(userId: String) {
-//        val storageRef = FirebaseStorage.getInstance().reference.child("gallery/$userId")
-//        storageRef.listAll().addOnSuccessListener { listResult ->
-//            val imageRefs = listResult.items.takeLast(6)
-//
-//            imageRefs.forEach{imageRef ->
-//                imageRef.downloadUrl.addOnSuccessListener { uri ->
-//                    galleryImageUrls.add(uri.toString())
-//                    galleryAdapter.notifyDataSetChanged()
-//                }.addOnFailureListener{e ->
-//                    Log.e("ProfileFragment", "Error fetching image URL: ${e.message}")
-//                }
-//            }
-//        }.addOnFailureListener{ e ->
-//            Log.e("ProfileFragment", "Error fetching gallery images: ${e.message}")
-//        }
-//    }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun fetchGalleryImages(userId: String) {
@@ -191,7 +152,7 @@ class ProfileFragment : Fragment() {
                     }
                 }
                 Log.d("ProfileFragment", "Total images fetched: ${galleryImageUrls.size}")
-                galleryAdapter.notifyDataSetChanged() // Update the adapter
+                galleryAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { e ->
                 Log.e("ProfileFragment", "Error fetching gallery images: ${e.message}")
