@@ -48,13 +48,17 @@ class FeedFragment : Fragment() {
         feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         searchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+        // Set up Adapters
         feedUpdateAdapter = FeedUpdateAdapter(feedUpdates) { feedUpdate ->
             handleLikeClick(feedUpdate)
         }
-        friendAdapter = FriendAdapter(searchResults) { userId ->
-            addFriend(userId)
-        }
+        friendAdapter = FriendAdapter(
+            searchResults,
+            { userId -> addFriend(userId) }, // Handle "Add Friend" button click
+            { userId -> navigateToProfile(userId) } // Handle profile click
+        )
 
+// Bind Adapters to RecyclerViews
         feedRecyclerView.adapter = feedUpdateAdapter
         searchRecyclerView.adapter = friendAdapter
 
@@ -80,6 +84,15 @@ class FeedFragment : Fragment() {
             }
         })
     }
+
+    private fun navigateToProfile(userId: String) {
+        val profileFragment = ProfileFragment.newInstance(userId)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, profileFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
 
     private fun handleLikeClick(feedUpdate: FeedUpdate) {
         val userId = auth.currentUser?.uid ?: return
@@ -158,14 +171,13 @@ class FeedFragment : Fragment() {
             }
     }
 
-
     @SuppressLint("NotifyDataSetChanged")
     private fun searchFriends(query: String) {
         val userId = auth.currentUser?.uid ?: return
 
         db.collection("users")
-            .whereGreaterThanOrEqualTo("name", query) // Case-sensitive search
-            .whereLessThanOrEqualTo("name", query + "\uf8ff") // Match partial names
+            .whereGreaterThanOrEqualTo("name", query)
+            .whereLessThanOrEqualTo("name", query + "\uf8ff")
             .get()
             .addOnSuccessListener { documents ->
                 searchResults.clear()
@@ -175,13 +187,10 @@ class FeedFragment : Fragment() {
                     val userId = document.id
                     searchResults.add(User(userId, name, profilePicture))
                 }
-                // Update the adapter
                 friendAdapter.notifyDataSetChanged()
             }
-            .addOnFailureListener { e ->
-                Log.e("FeedFragment", "Error searching friends: ${e.message}")
-            }
     }
+
 
     private fun addFriend(friendId: String) {
         val userId = auth.currentUser?.uid ?: return

@@ -13,7 +13,8 @@ import com.example.habitpals.models.User
 
 class FriendAdapter(
     private val friends: List<User>,
-    private val onAddFriendClick: (userId: String) -> Unit // Callback for the "Add Friend" button
+    private val onAddFriendClick: (userId: String) -> Unit,
+    private val onProfileClick: (userId: String) -> Unit
 ) : RecyclerView.Adapter<FriendAdapter.ViewHolder>() {
 
     // ViewHolder for Friend items
@@ -40,6 +41,11 @@ class FriendAdapter(
         holder.addFriendButton.setOnClickListener {
             onAddFriendClick(friend.userId) // Trigger the callback when the button is clicked
         }
+
+        holder.itemView.setOnClickListener {
+            onProfileClick(friend.userId)
+        }
+
     }
 
     // Return the number of items in the list

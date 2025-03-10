@@ -16,7 +16,10 @@ import com.example.habitpals.models.Habit
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class HabitsAdapter(private val habitsList: List<Habit>) : RecyclerView.Adapter<HabitsAdapter.HabitViewHolder>() {
+class HabitsAdapter(
+    private val habitsList: List<Habit>,
+    private val isCurrentUser: Boolean
+) : RecyclerView.Adapter<HabitsAdapter.HabitViewHolder>() {
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -41,6 +44,9 @@ class HabitsAdapter(private val habitsList: List<Habit>) : RecyclerView.Adapter<
         holder.progressBar.max = habit.duration
         holder.progressBar.progress = habit.progress
         holder.progressText.text = "${habit.progress}/${habit.duration}"
+
+        holder.addButton.visibility = if (isCurrentUser) View.VISIBLE else View.GONE
+
 
         holder.addButton.setOnClickListener {
             if(habit.progress < habit.duration) {

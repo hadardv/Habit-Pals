@@ -1,6 +1,7 @@
 package com.example.habitpals.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,11 +12,13 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habitpals.R
 import com.example.habitpals.adapters.GalleryAdapter
 import com.example.habitpals.adapters.HabitsAdapter
+import com.example.habitpals.auth.LoginActivity
 import com.example.habitpals.models.Habit
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,6 +31,24 @@ class ProfileFragment : Fragment() {
     private val auth = FirebaseAuth.getInstance()
     private lateinit var galleryAdapter: GalleryAdapter
     private val galleryImageUrls = mutableListOf<String>()
+    private var userId: String? = null
+
+    companion object {
+        private const val USER_ID = "userId"
+
+        fun newInstance(userId: String): ProfileFragment {
+            val fragment = ProfileFragment()
+            val args = Bundle()
+            args.putString(USER_ID, userId)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        userId = arguments?.getString(USER_ID)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,18 +61,21 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userId = auth.currentUser?.uid ?: return
+//        val userId = auth.currentUser?.uid ?: return
+        val profileUserId = userId ?: auth.currentUser?.uid ?: return
 
         val nameTextView = view.findViewById<TextView>(R.id.profile_name)
         val friendsTextView = view.findViewById<TextView>(R.id.profile_friends)
         val profileImageView = view.findViewById<ImageView>(R.id.profile_image)
-
         val addHabitButton = view.findViewById<Button>(R.id.btn_add_habit)
         val galleryButton = view.findViewById<Button>(R.id.btn_gallery)
+        val signOutButton = view.findViewById<Button>(R.id.btn_sign_out)
 
+
+        val isCurrentUser = userId == auth.currentUser?.uid
         val habitsRecyclerView = view.findViewById<RecyclerView>(R.id.habits_recycler)
         val habitsList = mutableListOf<Habit>()
-        val habitsAdapter = HabitsAdapter(habitsList)
+        val habitsAdapter = HabitsAdapter(habitsList, isCurrentUser)
         habitsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         habitsRecyclerView.adapter = habitsAdapter
 
@@ -61,36 +85,43 @@ class ProfileFragment : Fragment() {
         galleryRecyclerView.adapter = galleryAdapter
 
 
-        fetchGalleryImages(userId)
-        fetchHabits(userId, habitsList, habitsAdapter)
+        fetchGalleryImages(profileUserId)
+        fetchHabits(profileUserId, habitsList, habitsAdapter)
 
+        if (profileUserId == auth.currentUser?.uid) {
+            // The logged-in user is viewing their own profile, show buttons
+            addHabitButton.visibility = View.VISIBLE
+            signOutButton.visibility = View.VISIBLE
 
-        addHabitButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AddHabitFragment())
-                .addToBackStack(null)
-                .commit()
+            addHabitButton.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, AddHabitFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+            signOutButton.setOnClickListener {
+                signOut()
+            }
+            galleryButton.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, GalleryFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+        } else {
+
+            addHabitButton.visibility = View.GONE
+            galleryButton.visibility = View.GONE
+            signOutButton.visibility = View.GONE
         }
 
-        galleryButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, GalleryFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        db.collection("users").document(userId).get()
+        db.collection("users").document(profileUserId).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val name = document.getString("name") ?: "User"
                     val profileImage = document.getString("profilePicture")
                     val friends = document.get("friends") as? List<*> ?: emptyList<Any>()
                     val friendsCount = friends.size
-
-                    Log.d(
-                        "ProfileFragment",
-                        "Fetched Profile Data: Name=$name, Friends=$friendsCount, Image=$profileImage"
-                    )
 
                     nameTextView.text = name
                     friendsTextView.text = "$friendsCount Friends"
@@ -100,11 +131,7 @@ class ProfileFragment : Fragment() {
                             crossfade(true)
                             placeholder(R.drawable.ic_profile) // Fallback image
                         }
-                    } else {
-                        Log.e("ProfileFragment", "Profile image URL is empty or null")
                     }
-                } else {
-                    Log.e("ProfileFragment", "User document does not exist")
                 }
             }
             .addOnFailureListener { e ->
@@ -158,5 +185,13 @@ class ProfileFragment : Fragment() {
                 Log.e("ProfileFragment", "Error fetching gallery images: ${e.message}")
             }
     }
+
+    private fun signOut() {
+        auth.signOut()
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish() // Finish current activity to prevent returning to ProfileFragment
+    }
+
 }
 
