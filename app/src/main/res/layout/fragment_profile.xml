@@ -24,7 +24,6 @@
         android:layout_height="80dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_profile"
-        android:background="@drawable/circle_bg"
         tools:ignore="MissingConstraints" />
 
         <TextView

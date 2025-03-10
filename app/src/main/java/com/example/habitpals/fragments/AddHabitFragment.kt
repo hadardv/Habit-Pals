@@ -69,24 +69,6 @@ class AddHabitFragment : Fragment() {
 
     }
 
-    private fun fetchUserName(userId: String, onSuccess: (String) -> Unit) {
-        db.collection("users").document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val name = document.getString("name") ?: "Unknown User"
-                    onSuccess(name)
-                } else {
-                    Log.e("FetchUserName", "User document does not exist")
-                    onSuccess("Unknown User")
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("FetchUserName", "Error fetching user name: ${e.message}")
-                onSuccess("Unknown User")
-            }
-    }
-
     private fun addHabitToFeed(userId: String, habitName: String) {
         // Fetch the user's name and profile picture
         fetchUserProfile(userId) { userName, profilePicture ->
@@ -95,7 +77,8 @@ class AddHabitFragment : Fragment() {
                 "habitName" to habitName,
                 "timestamp" to System.currentTimeMillis(),
                 "friendName" to userName, // Add the user's name
-                "profilePicture" to profilePicture // Add the user's profile picture
+                "profilePicture" to profilePicture, // Add the user's profile picture
+                "likes" to 0 // Initialize the likes count to 0
             )
 
             db.collection("users").document(userId)
@@ -109,7 +92,7 @@ class AddHabitFragment : Fragment() {
                 }
         }
     }
-    // Function to fetch the user's name and profile picture
+
     private fun fetchUserProfile(userId: String, onSuccess: (String, String) -> Unit) {
         db.collection("users").document(userId)
             .get()

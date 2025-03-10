@@ -6,5 +6,7 @@ data class FeedUpdate(
     val type: String,
     val habitName: String,
     val timestamp: Long,
-    val profilePicture: String
+    val profilePicture: String,
+    val likes: Int = 0,
+    val feedDocumentId: String
 )

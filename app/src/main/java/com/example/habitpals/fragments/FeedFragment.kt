@@ -39,26 +39,27 @@ class FeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("FeedFragment", "onViewCreated called")
 
-        // Initialize RecyclerViews
+        // Initialize RecyclerViews and adapters
         val feedRecyclerView = view.findViewById<RecyclerView>(R.id.feed_recycler)
         val searchRecyclerView = view.findViewById<RecyclerView>(R.id.search_results_recycler)
 
-        // Set up LayoutManagers
         feedRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         searchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Set up Adapters
-        feedUpdateAdapter = FeedUpdateAdapter(feedUpdates)
+        feedUpdateAdapter = FeedUpdateAdapter(feedUpdates) { feedUpdate ->
+            handleLikeClick(feedUpdate)
+        }
         friendAdapter = FriendAdapter(searchResults) { userId ->
-            addFriend(userId) // Handle "Add Friend" button click
+            addFriend(userId)
         }
 
-        // Bind Adapters to RecyclerViews
         feedRecyclerView.adapter = feedUpdateAdapter
         searchRecyclerView.adapter = friendAdapter
 
         // Fetch friend updates
+        Log.d("FeedFragment", "Calling fetchFriendUpdates")
         fetchFriendUpdates()
 
         // Set up SearchView listener
@@ -80,9 +81,31 @@ class FeedFragment : Fragment() {
         })
     }
 
+    private fun handleLikeClick(feedUpdate: FeedUpdate) {
+        val userId = auth.currentUser?.uid ?: return
+        val friendId = feedUpdate.friendId
+        val feedDocumentId = feedUpdate.feedDocumentId
+
+        db.collection("users").document(friendId)
+            .collection("feed").document(feedDocumentId)
+            .collection("likes")
+            .document(userId)
+            .set(mapOf(
+                "userId" to userId,
+                "timestamp" to System.currentTimeMillis()
+            ))
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Liked!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to like: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun fetchFriendUpdates() {
         val userId = auth.currentUser?.uid ?: return
+        feedUpdates.clear() // Clear the list before fetching new updates
 
         // Get the user's friends
         db.collection("users").document(userId)
@@ -91,7 +114,7 @@ class FeedFragment : Fragment() {
             .addOnSuccessListener { friends ->
                 for (friend in friends) {
                     val friendId = friend.getString("friendId") ?: ""
-                    // Fetch the updated from the friend's feed collection
+                    // Fetch updates from the friend's feed collection
                     db.collection("users").document(friendId)
                         .collection("feed")
                         .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -103,17 +126,38 @@ class FeedFragment : Fragment() {
                                 val timestamp = document.getLong("timestamp") ?: 0
                                 val friendName = document.getString("friendName") ?: ""
                                 val profilePicture = document.getString("profilePicture") ?: ""
-                                feedUpdates.add(FeedUpdate(friendId, friendName, type, habitName, timestamp,profilePicture))
+                                val feedDocumentId = document.id
+
+                                // Fetch the likes count from the likes subcollection
+                                db.collection("users").document(friendId)
+                                    .collection("feed").document(feedDocumentId)
+                                    .collection("likes")
+                                    .get()
+                                    .addOnSuccessListener { likesDocuments ->
+                                        val likes = likesDocuments.size() // Number of likes
+                                        // Add the feed update with the likes count
+                                        feedUpdates.add(FeedUpdate(friendId, friendName, type, habitName, timestamp, profilePicture, likes, feedDocumentId))
+                                        // Update the adapter
+                                        feedUpdateAdapter.notifyDataSetChanged()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.e("FeedFragment", "Error fetching likes: ${e.message}")
+                                        // If fetching likes fails, add the feed update with 0 likes
+                                        feedUpdates.add(FeedUpdate(friendId, friendName, type, habitName, timestamp, profilePicture, 0, feedDocumentId))
+                                        feedUpdateAdapter.notifyDataSetChanged()
+                                    }
                             }
-                            // Update the adapter
-                            feedUpdateAdapter.notifyDataSetChanged()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("FeedFragment", "Error fetching feed updates: ${e.message}")
                         }
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("FeedFragment", "Error fetching friend updates: ${e.message}")
+                Log.e("FeedFragment", "Error fetching friends: ${e.message}")
             }
     }
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun searchFriends(query: String) {

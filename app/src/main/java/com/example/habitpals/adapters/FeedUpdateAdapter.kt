@@ -1,5 +1,7 @@
 package com.example.habitpals.adapters
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +12,18 @@ import coil.load
 import com.example.habitpals.R
 import com.example.habitpals.models.FeedUpdate
 
-class FeedUpdateAdapter(private val updates: List<FeedUpdate>) : RecyclerView.Adapter<FeedUpdateAdapter.ViewHolder>() {
+class FeedUpdateAdapter(
+    private val updates: List<FeedUpdate>,
+    private val onLikeClick: (feedUpdate: FeedUpdate) -> Unit
+) : RecyclerView.Adapter<FeedUpdateAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val friendProfile: ImageView = view.findViewById(R.id.friend_profile)
         val friendName: TextView = view.findViewById(R.id.friend_name)
         val updateMessage: TextView = view.findViewById(R.id.update_message)
         val updateTimestamp: TextView = view.findViewById(R.id.update_timestamp)
+        val likeButton: ImageView = view.findViewById(R.id.like_button)
+        val likeCount: TextView = view.findViewById(R.id.like_count)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -24,6 +31,7 @@ class FeedUpdateAdapter(private val updates: List<FeedUpdate>) : RecyclerView.Ad
         return ViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val update = updates[position]
         holder.friendName.text = update.friendName
@@ -34,9 +42,18 @@ class FeedUpdateAdapter(private val updates: List<FeedUpdate>) : RecyclerView.Ad
         }
         holder.updateTimestamp.text = formatTimestamp(update.timestamp)
 
+        // Load the profile picture
         holder.friendProfile.load(update.profilePicture) {
             crossfade(true)
             placeholder(R.drawable.placeholder_image)
+        }
+
+        // Display the likes count
+        holder.likeCount.text = update.likes.toString()
+
+        // Handle like button click
+        holder.likeButton.setOnClickListener {
+            onLikeClick(update)
         }
     }
 
