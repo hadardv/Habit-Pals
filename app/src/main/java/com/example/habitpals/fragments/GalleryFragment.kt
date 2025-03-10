@@ -110,7 +110,7 @@ class GalleryFragment : Fragment() {
         val galleryRef = db.collection("users").document(userId).collection("gallery")
 
         galleryRef.orderBy("timestamp").get().addOnSuccessListener { documents ->
-            val imageUrls = documents.mapNotNull { it.getString("imageUrl") }.toMutableList() // Convert to MutableList
+            val imageUrls = documents.mapNotNull { it.getString("imageUrl") }.toMutableList()
 
             val adapter = GalleryAdapter(imageUrls)
             val recyclerView = view?.findViewById<RecyclerView>(R.id.gallery_recycler)

@@ -42,16 +42,13 @@ class FeedUpdateAdapter(
         }
         holder.updateTimestamp.text = formatTimestamp(update.timestamp)
 
-        // Load the profile picture
         holder.friendProfile.load(update.profilePicture) {
             crossfade(true)
             placeholder(R.drawable.placeholder_image)
         }
 
-        // Display the likes count
         holder.likeCount.text = update.likes.toString()
 
-        // Handle like button click
         holder.likeButton.setOnClickListener {
             onLikeClick(update)
         }

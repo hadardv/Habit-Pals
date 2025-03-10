@@ -61,7 +61,6 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        val userId = auth.currentUser?.uid ?: return
         val profileUserId = userId ?: auth.currentUser?.uid ?: return
 
         val nameTextView = view.findViewById<TextView>(R.id.profile_name)
@@ -89,7 +88,6 @@ class ProfileFragment : Fragment() {
         fetchHabits(profileUserId, habitsList, habitsAdapter)
 
         if (profileUserId == auth.currentUser?.uid) {
-            // The logged-in user is viewing their own profile, show buttons
             addHabitButton.visibility = View.VISIBLE
             signOutButton.visibility = View.VISIBLE
 
@@ -190,7 +188,7 @@ class ProfileFragment : Fragment() {
         auth.signOut()
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
-        requireActivity().finish() // Finish current activity to prevent returning to ProfileFragment
+        requireActivity().finish()
     }
 
 }

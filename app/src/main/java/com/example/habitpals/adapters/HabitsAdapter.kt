@@ -68,7 +68,6 @@ class HabitsAdapter(
     private fun addCompletedHabitToFeed(habitName: String) {
         val userId = auth.currentUser?.uid ?: return
 
-        // Fetch the user's name (or use a cached value)
         fetchUserName(userId) { userName ->
             val feedUpdate = hashMapOf(
                 "type" to "completed_habit",

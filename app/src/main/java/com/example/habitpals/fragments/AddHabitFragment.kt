@@ -70,15 +70,14 @@ class AddHabitFragment : Fragment() {
     }
 
     private fun addHabitToFeed(userId: String, habitName: String) {
-        // Fetch the user's name and profile picture
         fetchUserProfile(userId) { userName, profilePicture ->
             val feedUpdate = hashMapOf(
                 "type" to "added_habit",
                 "habitName" to habitName,
                 "timestamp" to System.currentTimeMillis(),
-                "friendName" to userName, // Add the user's name
-                "profilePicture" to profilePicture, // Add the user's profile picture
-                "likes" to 0 // Initialize the likes count to 0
+                "friendName" to userName,
+                "profilePicture" to profilePicture,
+                "likes" to 0
             )
 
             db.collection("users").document(userId)
@@ -99,16 +98,16 @@ class AddHabitFragment : Fragment() {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val name = document.getString("name") ?: "Unknown User"
-                    val profilePicture = document.getString("profilePicture") ?: "" // Fetch the profile picture
+                    val profilePicture = document.getString("profilePicture") ?: ""
                     onSuccess(name, profilePicture)
                 } else {
                     Log.e("FetchUserProfile", "User document does not exist")
-                    onSuccess("Unknown User", "") // Default values
+                    onSuccess("Unknown User", "")
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("FetchUserProfile", "Error fetching user profile: ${e.message}")
-                onSuccess("Unknown User", "") // Default values
+                onSuccess("Unknown User", "")
             }
     }
 
