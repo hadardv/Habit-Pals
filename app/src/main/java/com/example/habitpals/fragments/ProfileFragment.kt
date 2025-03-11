@@ -71,7 +71,8 @@ class ProfileFragment : Fragment() {
         val signOutButton = view.findViewById<Button>(R.id.btn_sign_out)
 
 
-        val isCurrentUser = userId == auth.currentUser?.uid
+
+        val isCurrentUser = profileUserId == auth.currentUser?.uid
         val habitsRecyclerView = view.findViewById<RecyclerView>(R.id.habits_recycler)
         val habitsList = mutableListOf<Habit>()
         val habitsAdapter = HabitsAdapter(habitsList, isCurrentUser)

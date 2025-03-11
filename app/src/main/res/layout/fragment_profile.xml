@@ -5,140 +5,148 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".fragments.ProfileFragment">
 
-    <Button
+    <!-- Sign Out Button at the Top-Right -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_sign_out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign Out"
         android:backgroundTint="@color/purple"
-        android:textColor="@color/black"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        tools:ignore="MissingConstraints" />
+        android:textColor="@color/white"
+        app:cornerRadius="16dp"
+        android:layout_margin="16dp"
+        app:iconTint="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-<!--Top Section (Profile Section)-->
-    <LinearLayout
-        android:id="@+id/profile_section"
+    <!-- Profile Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/profile_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/btn_sign_out">
 
-
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_profile"
-        tools:ignore="MissingConstraints" />
-
-        <TextView
-            android:id="@+id/profile_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Loading..."
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
 
-    <TextView
-        android:id="@+id/profile_friends"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0 Friends"
-        android:textSize="14sp"/>
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile"
+                android:background="@drawable/circle_bg"/>
 
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Loading..."
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp" />
 
-    <!--Habits section (The middle section)-->
+            <TextView
+                android:id="@+id/profile_friends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 Friends"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Habits Section -->
     <TextView
         android:id="@+id/habits_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My Habits"
         android:textStyle="bold"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/profile_section"
+        app:layout_constraintTop_toBottomOf="@id/profile_card"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-         />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/habits_recycler"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="0dp"
         android:scrollbars="vertical"
         android:nestedScrollingEnabled="true"
         app:layout_constraintTop_toBottomOf="@id/habits_title"
+        app:layout_constraintBottom_toTopOf="@id/gallery_title"
         tools:listitem="@layout/item_habit"/>
 
-    <!--Gallery Section (bottom section)-->
-
+    <!-- Gallery Section -->
     <TextView
         android:id="@+id/gallery_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Gallery"
         android:textStyle="bold"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/habits_recycler"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gallery_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/gallery_title">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/gallery_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:overScrollMode="never"
-            android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/item_gallery_image"/>
-    </LinearLayout>
-
+        android:layout_height="100dp"
+        android:overScrollMode="never"
+        android:nestedScrollingEnabled="false"
+        app:layout_constraintTop_toBottomOf="@id/gallery_title"
+        app:layout_constraintBottom_toTopOf="@id/button_section"
+        tools:listitem="@layout/item_gallery_image"/>
 
     <!-- Buttons at the bottom of the screen -->
     <LinearLayout
+        android:id="@+id/button_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/gallery_recycler"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="NotSibling">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add_habit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginEnd="20dp"
             android:text="Add a habit"
             android:backgroundTint="@color/purple"
-            android:textColor="#333" />
+            android:textColor="@color/white"
+            app:cornerRadius="12dp"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_gallery"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Gallery"
-            android:textColor="#333"
-            android:backgroundTint="@color/purple" />
+            android:backgroundTint="@color/purple"
+            android:textColor="@color/white"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="12dp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
